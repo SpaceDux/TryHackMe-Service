@@ -3,26 +3,33 @@ version: "3.6"
 services:
   mongo-db:
     image: mongo:latest
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
       MONOGO_INITDB_DATABASE: thm
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017'}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
     ports:
       - 27017:27017
     volumes:
       - ./mongo-data:/data/db
+      - ./mongo-data:/data/configdb
 
   backend:
     restart: always
     build:
       context: ./TryHackMe-BackEnd
       dockerfile: ./Dockerfile
-    command: npm run prisma:deploy && npm run start:dev
+    command: npm run start:dev
     ports:
       - 3000:3000
     depends_on:
       - mongo-db
     environment:
-      DATABASE_URL: mongodb://root:password@mongo-db:27017/thm?authSource=admin
+      DATABASE_URL: mongodb://mongo-db:27017/thm?authSource=admin&replicaSet=rs0&retryWrites=true&w=majority&directConnection=true
       PORT: 3000
