@@ -1,0 +1,28 @@
+version: "3.6"
+
+services:
+  mongo-db:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONOGO_INITDB_DATABASE: thm
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-data:/data/db
+
+  backend:
+    restart: always
+    build:
+      context: ./TryHackMe-BackEnd
+      dockerfile: ./Dockerfile
+    command: npm run prisma:deploy && npm run start:dev
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo-db
+    environment:
+      DATABASE_URL: mongodb://root:password@mongo-db:27017/thm?authSource=admin
+      PORT: 3000

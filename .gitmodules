@@ -1,0 +1,4 @@
+[submodule "TryHackMe-BackEnd"]
+	path = TryHackMe-BackEnd
+	url = git@github.com:SpaceDux/TryHackMe-BackEnd.git
+	branch = master
