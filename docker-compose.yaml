@@ -25,7 +25,7 @@ services:
     build:
       context: ./TryHackMe-BackEnd
       dockerfile: ./Dockerfile
-    command: npm run start:dev
+    command: npm run start
     ports:
       - 3000:3000
     depends_on:

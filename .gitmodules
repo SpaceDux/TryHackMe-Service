@@ -2,3 +2,7 @@
 	path = TryHackMe-BackEnd
 	url = git@github.com:SpaceDux/TryHackMe-BackEnd.git
 	branch = master
+[submodule "TryHackMe-Frontend"]
+	path = TryHackMe-Frontend
+	url = git@github.com:SpaceDux/TryHackMe-Frontend.git
+	branch = master
